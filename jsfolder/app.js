@@ -1,52 +1,37 @@
+$(document).ready(function () { 
+  // This function is to get the data from youtube API and display it on the page
+  function getResults(query) {
+    $.getJSON("https://www.googleapis.com/youtube/v3/search",
+      {
+        "part": "snippet",
+        "key": "AIzaSyCpDWCc28PPOUNGzzjW-9aPa_06yHEVaZg",
+        "q": query 
+      },
+      function (data) {
+        if (data.pageInfo.totalResults == 0) {
+          alert("No videos found!");
+        }
+        // If there are no results it will just empty the list
+        displaySearchResults(data.items);
+      }
 
+    );
+  }
 
+  function displaySearchResults(videos) {
+    var html = "";
+    $.each(videos, function (index, video) {
+      // append li to ul
+      console.log(video.snippet.thumbnails.medium.url);
+      html = html + "<li><p>" + video.snippet.title +
+        "</p><img src='" +  video.snippet.thumbnails.high.url + "'/></li>" ;
 
-var youtube_URL = 'https://developers.google.com/youtube/v3/search';
-
-function getDataFromApi(searchTerm, callback) {
-  var query='searchTerm';
-  part:'snippet'
-  key:'AIzaSyAJZntSY3mRDBSpUaxQKhDDJrLy7EkeFA'
-   q: 'json'
-  
-  $.getJSON(youtube_URL, query, callback);
-}
-
-
-
-function displayYouTubeSearchData(data) {
-console.log(data);
-  var resultElement = '';
-  if (data.Search) {
-    data.Search.forEach(function(video) {
-     resultElement += '<p>' + item.Title + '</p>';
     });
+    $("#search-results ul").html(html);
   }
-  else {
-    resultElement += '<p>No results</p>';
-  }
-  
-  $('.js-search-results').html(resultElement);
-}
 
-function watchSubmit() {
-  $('.js-search-form').submit(function(e) {
-    e.preventDefault();
-    var query = $(this).find('.js-query').val();
-    getDataFromApi(query, displayYouTubeSearchData);
+  $("#search-form").submit(function (event) {
+    event.preventDefault();
+    getResults($("#query").val());
   });
-}
-
-$(function(){watchSubmit();});
-
-
-
-
-
-
-
-
-
-
-
-
+});
